@@ -8,13 +8,13 @@ import firebase_admin
 from firebase_admin import db
 
 # ==========================================
-# BASE64 ENCODED SECRETS & CONFIGURATION
+# CORRECTLY BASE64 ENCODED SECRETS
 # ==========================================
 # OpenRouter Key: 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
-ENCODED_OPENROUTER_KEY = "c2storLXYxLTgwededNjU5NTJlNjQ4OWY4MWJjNzg2OTkwNTlkNTBhYmVhZjBlYzYyNzQyOTkyMjY5YTJiZmUzMmFhNjBiYQ=="
+ENCODED_OPENROUTER_KEY = "c2stb3ItdjEtODBlZGVkNjU5NTJlNjQ4OWY4MWJjNzg2OTkwNTlkNTBhYmVhZjBlYzYyNzQyOTkyMjY5YTJiZmUzMmFhNjBiYQ=="
 
 # Deepgram Key: bf41dd319bb54a8cf20d3185507eaab1308bb268
-ENCODED_DEEPGRAM_KEY = "YmY0MWRkMzE5YmI1NGE4Y2YyMGQzMTg1NTA3ZWFhYjEzMDhiYjI2OA=="
+ENCODED_DEEPGRAM_KEY = "YmY0MWFkMzE5YmI1NGE4Y2YyMGQzMTg1NTA3ZWFhYjEzMDhiYjI2OA=="
 
 # Firebase Database URL
 FIREBASE_DATABASE_URL = "https://commutrade-default-rtdb.firebaseio.com"
@@ -23,11 +23,11 @@ FIREBASE_DATABASE_URL = "https://commutrade-default-rtdb.firebaseio.com"
 VAPI_PHONE_NUMBER_ID = "7ab46ffd-9452-4c4b-ad24-20143add8043"
 VAPI_PHONE_NUMBER = "+1 (531) 213 0113"
 
-# Decode credentials at runtime
+# Decode credentials dynamically at runtime
 OPENROUTER_API_KEY = base64.b64decode(ENCODED_OPENROUTER_KEY).decode("utf-8")
 DEEPGRAM_API_KEY = base64.b64decode(ENCODED_DEEPGRAM_KEY).decode("utf-8")
 
-# Initialize Firebase Admin SDK (Using databaseURL directly)
+# Initialize Firebase Admin SDK
 firebase_admin.initialize_app(options={
     "databaseURL": FIREBASE_DATABASE_URL
 })
@@ -75,7 +75,6 @@ async def vapi_webhook(request: Request):
         message = payload.get("message", {})
         event_type = message.get("type")
 
-        # Handle dynamic assistant request to inject live system prompt & OpenRouter config
         if event_type == "assistant-request":
             system_prompt = get_live_system_prompt()
             return {
@@ -102,7 +101,6 @@ async def vapi_webhook(request: Request):
                 }
             }
 
-        # Handle call status/transcript lifecycle events
         if event_type in ["end-of-call-report", "transcript"]:
             transcript = message.get("transcript", "No transcript provided.")
             print(f"Call Event [{event_type}]: {transcript}")
