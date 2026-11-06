@@ -8,13 +8,16 @@ import firebase_admin
 from firebase_admin import db
 
 # ==========================================
-# CORRECTLY BASE64 ENCODED SECRETS
+# BASE64 ENCODED SECRETS & CONFIGURATION
 # ==========================================
 # OpenRouter Key: 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
 ENCODED_OPENROUTER_KEY = "c2stb3ItdjEtODBlZGVkNjU5NTJlNjQ4OWY4MWJjNzg2OTkwNTlkNTBhYmVhZjBlYzYyNzQyOTkyMjY5YTJiZmUzMmFhNjBiYQ=="
 
 # Deepgram Key: bf41dd319bb54a8cf20d3185507eaab1308bb268
 ENCODED_DEEPGRAM_KEY = "YmY0MWFkMzE5YmI1NGE4Y2YyMGQzMTg1NTA3ZWFhYjEzMDhiYjI2OA=="
+
+# Vapi Private Key: b296bc89-550b-4a49-8475-d776072cd5df
+ENCODED_VAPI_PRIVATE_KEY = "YjI5NmJjODktNTUwYi00YTQ5LTg0NzUtZDc3NjA3MmNkNWRm"
 
 # Firebase Database URL
 FIREBASE_DATABASE_URL = "https://commutrade-default-rtdb.firebaseio.com"
@@ -26,6 +29,7 @@ VAPI_PHONE_NUMBER = "+1 (531) 213 0113"
 # Decode credentials dynamically at runtime
 OPENROUTER_API_KEY = base64.b64decode(ENCODED_OPENROUTER_KEY).decode("utf-8")
 DEEPGRAM_API_KEY = base64.b64decode(ENCODED_DEEPGRAM_KEY).decode("utf-8")
+VAPI_PRIVATE_KEY = base64.b64decode(ENCODED_VAPI_PRIVATE_KEY).decode("utf-8")
 
 # Initialize Firebase Admin SDK
 firebase_admin.initialize_app(options={
@@ -112,10 +116,10 @@ async def vapi_webhook(request: Request):
 
 @app.post("/make-call")
 async def make_call(body: OutboundCallRequest):
-    """Triggers an outbound phone call using the Vapi API."""
+    """Triggers an outbound phone call using the Vapi API with proper Vapi Private Key."""
     url = "https://api.vapi.ai/call/phone"
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {VAPI_PRIVATE_KEY}",
         "Content-Type": "application/json"
     }
 
